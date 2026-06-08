@@ -3,7 +3,7 @@
 Plugin Name: امنیت هومانا (Houmana Security)
 Plugin URI: https://houmana.ir
 Description: پلاگین اختصاصی برای مخفی‌سازی ردپای تکنولوژی، حذف ورژن‌ها و افزایش امنیت صفحه ورود.
-Version: 1.3
+Version: 1.4
 Author: هومن نصرالهی
 Author URI: https://houmana.ir
 License: GPL2
@@ -77,3 +77,24 @@ function houmana_check_enum($redirect,$request){
     }
     return $redirect;
 }
+
+
+// کد موقت برای اجبار به چک کردن آپدیت (بعد از تست حذف شود)
+add_action('admin_init', function() {
+    global $myUpdateChecker;
+    if (isset($myUpdateChecker)) {
+        $myUpdateChecker->checkForUpdates();
+    }
+});
+
+add_action('admin_notices', function() {
+    global $myUpdateChecker;
+    if (isset($myUpdateChecker)) {
+        $update = $myUpdateChecker->getUpdate();
+        if ($update) {
+            echo '<div class="notice notice-success"><p>آپدیت پیدا شد! ورژن جدید: ' . $update->version . '</p></div>';
+        } else {
+            echo '<div class="notice notice-warning"><p>آپدیتی پیدا نشد. ورژن فعلی شما با گیت‌هاب یکی است یا ارتباط برقرار نشد.</p></div>';
+        }
+    }
+});
